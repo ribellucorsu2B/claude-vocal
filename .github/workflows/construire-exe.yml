@@ -26,20 +26,21 @@ jobs:
           pip install -r requirements.txt pyinstaller
 
       - name: Fabriquer l'icône
-        run: python claude_vocal.py --icone icone.ico
+        run: python voxoff.py --icone icone.ico
 
-      - name: Construire ClaudeVocal.exe
+      - name: Construire VoxOff.exe
         run: >
           pyinstaller --noconfirm --clean --onefile --windowed
-          --name ClaudeVocal --icon icone.ico
+          --name VoxOff --icon icone.ico
+          --add-data "sons;sons"
           --collect-all vosk --hidden-import pystray._win32
-          claude_vocal.py
+          voxoff.py
 
       - name: Vérifier que le .exe démarre et charge tout
         shell: pwsh
         run: |
           $resultat = Join-Path $PWD "verification.txt"
-          Start-Process -FilePath "dist\ClaudeVocal.exe" -ArgumentList "--verifier", "`"$resultat`"" -Wait
+          Start-Process -FilePath "dist\VoxOff.exe" -ArgumentList "--verifier", "`"$resultat`"" -Wait
           if (-not (Test-Path $resultat)) { throw "Le .exe n'a rien écrit : il ne démarre pas." }
           $contenu = Get-Content $resultat -Raw
           Write-Host $contenu
@@ -47,8 +48,8 @@ jobs:
 
       - uses: actions/upload-artifact@v6
         with:
-          name: ClaudeVocal
-          path: dist/ClaudeVocal.exe
+          name: VoxOff
+          path: dist/VoxOff.exe
 
       - name: Ajouter le .exe à la version publiée
         if: github.event_name == 'release'
@@ -57,17 +58,24 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ github.event.release.tag_name }}
         run: |
-          gh release upload "$TAG" dist/ClaudeVocal.exe --clobber
+          gh release upload "$TAG" dist/VoxOff.exe --clobber
           if [ -z "$(gh release view "$TAG" --json body --jq .body)" ]; then
             cat > notes.md <<'FIN'
-          ## Installation
+          ## 🇫🇷 Installation
 
-          1. Télécharge **ClaudeVocal.exe** ci-dessous et range-le dans un dossier où il restera (par exemple `Documents\ClaudeVocal`).
-          2. Double-clique dessus. Si Windows affiche « Windows a protégé votre ordinateur », clique sur **Informations complémentaires**, puis **Exécuter quand même** (le programme n'est pas signé, c'est normal).
-          3. Au premier lancement, il télécharge le modèle vocal français (~40 Mo) : une minute et c'est prêt. Une icône verte apparaît près de l'horloge.
+          1. Télécharge **VoxOff.exe** ci-dessous et range-le dans un dossier où il restera (par exemple `Documents\VoxOff`).
+          2. Double-clique dessus. Si un avertissement s'affiche, c'est normal pour un nouveau programme : le mode d'emploi du projet explique quoi faire.
+          3. Au premier lancement, il télécharge le modèle vocal (~40 Mo). Une icône verte apparaît près de l'horloge.
 
-          Dis ensuite : « Claude, éteins l'ordinateur » ou « Claude, mets en veille l'ordinateur ».
-          Clic droit sur l'icône pour le mode test, les réglages (prénom, micro, délais) ou pour quitter.
+          Dis ensuite : « Ordinateur, éteins-toi » ou « Ordinateur, mets-toi en veille ».
+
+          ## 🇬🇧 Installation
+
+          1. Download **VoxOff.exe** below and keep it in a folder where it will stay (e.g. `Documents\VoxOff`).
+          2. Double-click it. A warning may appear: this is normal for a new program, see the README.
+          3. On first launch it downloads the voice model (~40 MB). A green icon appears next to the clock.
+
+          If Windows is in English, VoxOff starts in English automatically. Otherwise, right-click the icon, open **Réglages** and set `langue = en`. Then say "Computer, shut down" or "Computer, go to sleep".
           FIN
             gh release edit "$TAG" --notes-file notes.md
           fi
