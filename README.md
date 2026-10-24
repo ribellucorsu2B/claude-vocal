@@ -14,12 +14,34 @@
 1. Télécharge **[ClaudeVocal.exe](https://github.com/ribellucorsu2B/claude-vocal/releases/latest/download/ClaudeVocal.exe)** (page des versions : [Releases](https://github.com/ribellucorsu2B/claude-vocal/releases/latest)).
 2. Range-le dans un dossier où il restera, par exemple `Documents\ClaudeVocal`.
 3. Double-clique dessus.
-   Si Windows affiche *« Windows a protégé votre ordinateur »*, clique sur **Informations complémentaires**, puis **Exécuter quand même**. Le programme n'est pas signé numériquement, c'est normal pour un petit projet perso.
-4. Au premier lancement, il télécharge le modèle vocal français (~40 Mo). Après une minute, une **icône verte** apparaît près de l'horloge : c'est prêt !
+4. Au premier lancement, il télécharge le modèle vocal français (~40 Mo). Après une minute, une **icône verte** apparaît près de l'horloge : c'est prêt ! (Si tu ne la vois pas, clique sur la petite flèche **^** à côté de l'horloge.)
 
 Il se lance ensuite tout seul à chaque démarrage de Windows (décochable dans le menu).
 
-Pas besoin d'installer Python ni quoi que ce soit d'autre.
+Pas besoin d'installer Python ni quoi que ce soit d'autre, et pas besoin des droits administrateur.
+
+### ⚠️ Un avertissement s'affiche ? C'est normal
+
+Windows et les navigateurs se méfient de **tout nouveau programme** qu'ils ne connaissent pas encore. Ça ne veut pas dire qu'il est dangereux : seulement qu'il est récent et qu'il n'a pas de signature numérique payante. Tu peux voir deux avertissements :
+
+**1. Au téléchargement**, Edge affiche *« ClaudeVocal.exe n'est pas fréquemment téléchargé »* :
+passe la souris sur le téléchargement, clique sur **…** puis **Conserver**, ensuite sur **Afficher plus** puis **Conserver quand même**.
+(Avec Chrome, c'est le même principe : choisis de conserver le fichier.)
+
+**2. Au premier lancement**, Windows affiche *« Windows a protégé votre ordinateur »* :
+clique sur **Informations complémentaires**, puis sur **Exécuter quand même**.
+
+Ces avertissements disparaissent d'eux-mêmes à mesure que le programme est téléchargé par d'autres personnes.
+
+### 🔒 Est-ce que c'est sûr ?
+
+- **Tout le code est visible** ici, dans un seul fichier : [claude_vocal.py](claude_vocal.py).
+- **Le .exe n'est pas fabriqué sur mon PC** : il est construit publiquement par GitHub à partir de ce code. Chaque fabrication est consultable dans l'onglet [Actions](https://github.com/ribellucorsu2B/claude-vocal/actions).
+- **Il ne va sur internet qu'une seule fois**, au premier lancement, pour télécharger le modèle vocal français sur le site officiel de [Vosk](https://alphacephei.com/vosk/models). Ta voix ne quitte jamais ton PC.
+- **Rien de caché** : pas d'installation, pas de droits administrateur. Pour le désinstaller, il suffit de supprimer le fichier (voir la partie « Désinstaller » plus bas).
+- **Tu peux le faire vérifier** gratuitement par des dizaines d'antivirus sur [virustotal.com](https://www.virustotal.com) : glisse simplement le fichier sur la page.
+
+Il arrive qu'un antivirus se méfie d'un programme fabriqué avec PyInstaller, l'outil qui transforme le code Python en .exe : c'est une fausse alerte connue. Dans le doute, tu peux aussi lancer le programme depuis le code source (voir plus bas).
 
 ## 🗣️ Les phrases
 
