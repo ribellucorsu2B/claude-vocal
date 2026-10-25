@@ -3,7 +3,7 @@
 VoxOff : éteins, mets en veille, redémarre ou verrouille ton PC Windows à la voix.
 VoxOff: shut down, sleep, restart or lock your Windows PC by voice.
 
-    « Ordinateur, éteins-toi »  ·  « Ordinateur, mets-toi en veille »
+    « Ordinateur, arrête-toi »  ·  « Ordinateur, mets-toi en veille »
     "Computer, shut down"       ·  "Computer, go to sleep"
 
 Une icône près de l'horloge montre que l'écoute tourne (clic droit pour le menu).
@@ -34,7 +34,7 @@ import wave
 import zipfile
 from pathlib import Path
 
-VERSION = "3.0.0"
+VERSION = "3.1.0"
 NOM_APPLI = "VoxOff"
 
 DONNEES = Path(os.environ.get("LOCALAPPDATA") or Path.home()) / "VoxOff"
@@ -64,6 +64,9 @@ LANGUES = {
         "remplissage": {"euh", "bon", "alors", "eh", "he", "hey", "ok", "okay", "dis", "allez"},
         "commandes": {
             "annuler": [("annul",), ("stop",)],
+            # « arrête-toi » : éteint le PC, mais annule si un compte à rebours tourne
+            # (« Ordinateur, arrête ! » veut alors dire « stop »).
+            "arreter": [("arret",)],
             "veille": [("veille",), ("dodo",)],
             "redemarrer": [("redemar",)],
             "eteindre": [("etein",), ("eteign",)],
@@ -104,7 +107,7 @@ TEXTES = {
         "notif_premier_dl": "Je télécharge le modèle vocal ({langue}, ~40 Mo). Ça prend une minute.",
         "notif_dl_ko": "Impossible de télécharger le modèle vocal. Vérifie ta connexion : "
                        "je réessaie toutes les minutes.",
-        "notif_pret": "Prêt ! Dis « {r}, éteins-toi » ou « {r}, mets-toi en veille ». "
+        "notif_pret": "Prêt ! Dis « {r}, arrête-toi » ou « {r}, mets-toi en veille ». "
                       "Clic droit sur l'icône pour le menu.",
         "notif_installe": "Installé ! Je me lancerai à chaque démarrage de Windows "
                           "(décochable dans le menu de l'icône).",
@@ -133,7 +136,7 @@ TEXTES = {
         "ligne_annule": "   annulé.",
         "ligne_aurait": "   → ici j'aurais lancé : {a}",
         "aide": "Phrases reconnues :\n\n"
-                "« {r}, éteins-toi »\n"
+                "« {r}, arrête-toi »  (ou « éteins-toi »)\n"
                 "« {r}, mets-toi en veille »\n"
                 "« {r}, redémarre »\n"
                 "« {r}, verrouille-toi »\n"
@@ -592,6 +595,8 @@ class Gestionnaire:
         return False
 
     def recevoir(self, nom):
+        if nom == "arreter":
+            nom = "annuler" if self.en_cours else "eteindre"
         maintenant = time.monotonic()
         if nom != "annuler" and maintenant - self.derniere < 3:
             return
